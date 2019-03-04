@@ -8,6 +8,13 @@ Parameters:
     MaxLength: '18'
     AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{2})
     ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default:  "Kubernetes VPC CIDR"
+        Parameters:
+          - VPCCidr
 
 Resources:
   KubernetesVPC:
