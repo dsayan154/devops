@@ -37,3 +37,36 @@ Resources:
       Tags:
         - Key: 'Name'
           Value: !Join ['-',[!Ref 'AWS::StackName','NATGWA']]
+  NATGWB:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !ImportValue EIP2AllocationId
+      SubnetId: !Ref NATGWBSubnet
+      Tags:
+        - Key: 'Name'
+          Value: !Join ['-',[!Ref 'AWS::StackName','NATGWB']]
+  NATGWC:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !ImportValue EIP2AllocationId
+      SubnetId: !Ref NATGWCSubnet
+      Tags:
+        - Key: 'Name'
+          Value: !Join ['-',[!Ref 'AWS::StackName','NATGWC']]
+
+Outputs:
+  NatGatewayA:
+    Description: 'NAT gateway for private instances in AZ1'
+    Value: !Ref NATGWA
+    Export:
+      Name: 'NatGatewayA'
+  NatGatewayB:
+    Description: 'NAT gateway for private instances in AZ2'
+    Value: !Ref NATGWB
+    Export:
+      Name: 'NatGatewayB'
+  NatGatewayC:
+    Description: 'NAT gateway for private instances in AZ3'
+    Value: !Ref NATGWC
+    Export:
+      Name: 'NatGatewayC'
