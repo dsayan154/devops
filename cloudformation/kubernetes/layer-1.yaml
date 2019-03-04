@@ -25,7 +25,18 @@ Resources:
       InstanceTenancy: 'default'
       Tags:
         - Key: Name
-          Value: !Join ['-',['Kubernetes', !Ref 'AWS::StackName', 'vpc']]
+          Value: !Join ['-',[!Ref 'AWS::StackName', 'vpc']]
+  KubeIGW:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Join ['-',[!Ref 'AWS::StackName', 'vpc']]
+  AttachIGW:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref KubeIGW
+      VpcId: !Ref KubeVPC
 
 Outputs:
   KubeVpcId:
@@ -33,3 +44,8 @@ Outputs:
     Value: !Ref KubeVPC
     Export:
       Name: KubeVpcId
+  KubeIGW:
+    Description: 'Kubernetes VPC Internet Gateway'
+    Value: !Ref KubeIGW
+    Export:
+      Name: KubeIGW
