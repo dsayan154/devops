@@ -1,0 +1,43 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  NATGWASubnet:
+    Description: 'Subnet for NAT gateway in AZ1'
+    Type: AWS::EC2::Subnet::Id
+  NATGWBSubnet:
+    Description: 'Subnet for NAT gateway in AZ2'
+    Type: AWS::EC2::Subnet::Id
+  NATGWCSubnet:
+    Description: 'Subnet for NAT gateway in AZ3'
+    Type: AWS::EC2::Subnet::Id
+
+Metadata:
+  ParameterLabels:
+    - NATGWSubnetA:
+        default: 'Subnet for NAT gateway on AZ1'
+    - NATGWSubnetB:
+        default: 'Subnet for NAT gateway on AZ2'
+    - NATGWSubnetC:
+        default: 'Subnet for NAT gateway on AZ3'
+  ParameterGroups:
+    - Label:
+        default: 'Select only public subnets on different AZs for NAT gateways'
+      ParameterGroups:
+        - NATGWASubnet
+        - NATGWBSubnet
+        - NATGWCSubnet
+
+Resources:
+  NATGWA:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !Sub
+        - |
+          'Fn::GetAtt': ${EIP1}.AllocationId
+        - EIP1:
+            'Fn::ImportValue': EIP1
+      SubnetId: !Ref NATGWASubnet
+      Tags:
+        - Key: 'Name'
+          Value: !Join ['-',[!Ref 'AWS::StackName','NATGWA']]

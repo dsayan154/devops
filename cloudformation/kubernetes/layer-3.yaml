@@ -1,0 +1,33 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  EIP1:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  EIP2:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  EIP3:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+
+Outputs:
+  EIP1:
+    Description: 'EIP for NAT instance1'
+    Value: EIP1
+    Export:
+      Name: EIP1
+  EIP2:
+    Description: 'EIP for NAT instance2'
+    Value: EIP2
+    Export:
+      Name: EIP2
+  EIP3:
+    Description: 'EIP for NAT instance3'
+    Value: EIP3
+    Export:
+      Name: EIP3
