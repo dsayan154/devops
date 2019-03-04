@@ -18,16 +18,16 @@ Resources:
 Outputs:
   EIP1:
     Description: 'EIP for NAT instance1'
-    Value: EIP1
+    Value: !Ref EIP1
     Export:
       Name: EIP1
   EIP2:
     Description: 'EIP for NAT instance2'
-    Value: EIP2
+    Value: !Ref EIP2
     Export:
       Name: EIP2
   EIP3:
     Description: 'EIP for NAT instance3'
-    Value: EIP3
+    Value: !Ref EIP3
     Export:
       Name: EIP3

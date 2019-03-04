@@ -149,31 +149,31 @@ Resources:
 Outputs:
   PublicSubnetA:
     Description: 'K8s public subnetA ID'
-    Value: PublicSubnetA
+    Value: !Ref PublicSubnetA
     Export:
       Name: KubePublicSubnetA
   PublicSubnetB:
     Description: 'K8s public subnetB ID'
-    Value: PublicSubnetB
+    Value: !Ref PublicSubnetB
     Export:
       Name: KubePublicSubnetB
   PublicSubnetC:
     Description: 'K8s public subnetC ID'
-    Value: PublicSubnetC
+    Value: !Ref PublicSubnetC
     Export:
       Name: KubePublicSubnetC
   PrivateSubnetA:
     Description: 'K8s private subnetA ID'
-    Value: PrivateSubnetA
+    Value: !Ref PrivateSubnetA
     Export:
       Name: KubePrivateSubnetA
   PrivateSubnetB:
     Description: 'K8s private subnetB ID'
-    Value: PrivateSubnetB
+    Value: !Ref PrivateSubnetB
     Export:
       Name: KubePrivateSubnetB
   PrivateSubnetC:
     Description: 'K8s private subnetC ID'
-    Value: PrivateSubnetC
+    Value: !Ref PrivateSubnetC
     Export:
       Name: KubePrivateSubnetC
