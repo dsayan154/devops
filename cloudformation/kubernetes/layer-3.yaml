@@ -18,16 +18,16 @@ Resources:
 Outputs:
   EIP1:
     Description: 'EIP for NAT instance1'
-    Value: !Ref EIP1
+    Value: !GetAtt EIP1.AllocationId
     Export:
-      Name: EIP1
+      Name: EIP1AllocationId
   EIP2:
     Description: 'EIP for NAT instance2'
-    Value: !Ref EIP2
+    Value: !GetAtt EIP2.AllocationId
     Export:
-      Name: EIP2
+      Name: EIP2AllocationId
   EIP3:
     Description: 'EIP for NAT instance3'
-    Value: !Ref EIP3
+    Value: !GetAtt EIP3.AllocationId
     Export:
-      Name: EIP3
+      Name: EIP3AllocationId

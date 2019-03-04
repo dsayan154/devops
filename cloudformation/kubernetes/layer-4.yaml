@@ -32,11 +32,7 @@ Resources:
   NATGWA:
     Type: 'AWS::EC2::NatGateway'
     Properties:
-      AllocationId: !Sub
-        - |
-          'Fn::GetAtt': ${EIP1}.AllocationId
-        - EIP1:
-            'Fn::ImportValue': EIP1
+      AllocationId: !ImportValue EIP1AllocationId
       SubnetId: !Ref NATGWASubnet
       Tags:
         - Key: 'Name'
