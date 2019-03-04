@@ -1,0 +1,179 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  KubernetesVPC:
+    Description: 'Select the VPC for the Kubernets Subnets'
+    Type: AWS::EC2::VPC::Id
+  PublicSubnetACidr:
+    Description: 'IP CIDR for public subnet in eu-west-1a'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '10.0.0.0/20'
+  PublicSubnetBCidr:
+    Description: 'IP CIDR for public subnet in eu-west-1b'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '10.0.16.0/20'
+  PublicSubnetCCidr:
+    Description: 'IP CIDR for public subnet in eu-west-1c'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '10.0.32.0/20'
+  PrivateSubnetACidr:
+    Description: 'IP CIDR for private subnet in eu-west-1a'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '10.0.48.0/20'
+  PrivateSubnetBCidr:
+    Description: 'IP CIDR for private subnet in eu-west-1b'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '10.0.64.0/20'
+  PrivateSubnetCCidr:
+    Description: 'IP CIDR for private subnet in eu-west-1c'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '10.0.80.0/20'
+  
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: 'VPC selection for Kubernetes'
+        Parameters:
+          - KubernetesVPC
+      - Label:
+          default: 'Public subnet CIDRs'
+        Parameters:
+          - PublicSubnetACidr
+          - PublicSubnetBCidr
+          - PublicSubnetCCidr
+      - Label:
+          default: 'Private subnet CIDRs'
+        Parameters:
+          - PrivateSubnetACidr
+          - PrivateSubnetBCidr
+          - PrivateSubnetCCidr
+    ParameterLabels:
+      KubernetesVPC:
+        default: 'Which VPC should the K8s be hosted?'
+      PublicSubnetACidr:
+        default: 'IP CIDR for public subnet in eu-west-1a'
+      PublicSubnetBCidr:
+        default: 'IP CIDR for public subnet in eu-west-1b'
+      PublicSubnetCCidr:
+        default: 'IP CIDR for public subnet in eu-west-1c'
+      PrivateSubnetACidr:
+        default: 'IP CIDR for private subnet in eu-west-1a'
+      PrivateSubnetBCidr:
+        default: 'IP CIDR for private subnet in eu-west-1b'
+      PrivateSubnetCCidr:
+        default: 'IP CIDR for private subnet in eu-west-1c'
+
+Resources:
+  PublicSubnetA:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetACidr
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref KubernetesVPC
+      Tags:
+        - Key: Name
+          Value: !Join ['-',[!Ref 'AWS::StackName','PublicSubnetA']]        
+  PublicSubnetB:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetBCidr
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref KubernetesVPC
+      Tags:
+        - Key: Name
+          Value: !Join ['-',[!Ref 'AWS::StackName','PublicSubnetB']]
+  PublicSubnetC:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [2, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetCCidr
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref KubernetesVPC
+      Tags:
+        - Key: Name
+          Value: !Join ['-',[!Ref 'AWS::StackName','PublicSubnetC']]
+  PrivateSubnetA:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetACidr
+      VpcId: !Ref KubernetesVPC
+      Tags:
+        - Key: Name
+          Value: !Join ['-',[!Ref 'AWS::StackName','PrivateSubnetA']]
+  PrivateSubnetB:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetBCidr
+      VpcId: !Ref KubernetesVPC
+      Tags:
+        - Key: Name
+          Value: !Join ['-',[!Ref 'AWS::StackName','PrivateSubnetB']]
+  PrivateSubnetC:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [2, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetCCidr
+      VpcId: !Ref KubernetesVPC
+      Tags:
+        - Key: Name
+          Value: !Join ['-',[!Ref 'AWS::StackName','PrivateSubnetC']]
+Outputs:
+  PublicSubnetA:
+    Description: 'K8s public subnetA ID'
+    Value: PublicSubnetA
+    Export:
+      Name: KubePublicSubnetA
+  PublicSubnetB:
+    Description: 'K8s public subnetB ID'
+    Value: PublicSubnetB
+    Export:
+      Name: KubePublicSubnetB
+  PublicSubnetC:
+    Description: 'K8s public subnetC ID'
+    Value: PublicSubnetC
+    Export:
+      Name: KubePublicSubnetC
+  PrivateSubnetA:
+    Description: 'K8s private subnetA ID'
+    Value: PrivateSubnetA
+    Export:
+      Name: KubePrivateSubnetA
+  PrivateSubnetB:
+    Description: 'K8s private subnetB ID'
+    Value: PrivateSubnetB
+    Export:
+      Name: KubePrivateSubnetB
+  PrivateSubnetC:
+    Description: 'K8s private subnetC ID'
+    Value: PrivateSubnetC
+    Export:
+      Name: KubePrivateSubnetC
