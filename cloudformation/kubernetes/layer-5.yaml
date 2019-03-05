@@ -1,0 +1,193 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  KubernetesVpcId:
+    Description: 'Kubernetes VPC for public route table'
+    Type: 'AWS::EC2::VPC::Id'
+  PublicRouteCidr:
+    Description: 'This will be the destination cidr for public route'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '0.0.0.0/0'
+  PublicSubnetA:
+    Description: 'Public subnet in AZ1'
+    Type: 'AWS::EC2::Subnet::Id'
+  PublicSubnetB:
+    Description: 'Public subnet in AZ2'
+    Type: 'AWS::EC2::Subnet::Id'
+  PublicSubnetC:
+    Description: 'Public subnet in AZ3'
+    Type: 'AWS::EC2::Subnet::Id'
+  PrivateRoute1Cidr:
+    Description: 'This will be the destination cidr for private route1'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '0.0.0.0/0'
+  PrivateRoute2Cidr:
+    Description: 'This will be the destination cidr for private route2'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '0.0.0.0/0'
+  PrivateRoute3Cidr:
+    Description: 'This will be the destination cidr for private route3'
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: The CIDR has to be of the pattern (xx)x.(xx)x.(xx)x.(xx)x/xx
+    Default: '0.0.0.0/0'
+  PrivateSubnetA:
+    Description: 'Private subnet in AZ1'
+    Type: 'AWS::EC2::Subnet::Id'
+  PrivateSubnetB:
+    Description: 'Private subnet in AZ2'
+    Type: 'AWS::EC2::Subnet::Id'
+  PrivateSubnetC:
+    Description: 'Private subnet in AZ3'
+    Type: 'AWS::EC2::Subnet::Id'
+
+Metadata:
+  ParameterGroups:
+    - Label:
+        default: 'Kubernetes VPC for the public route table'
+      Parameters:
+        - KubernetesVpcId
+    - Label:
+        default: 'Public route configurations'
+      Parameters: 
+        - PublicRouteCidr
+    - Label:
+        default: 'Please select K8s VPC public subnets'
+      Parameters:
+        - PublicSubnetA
+        - PublicSubnetB
+        - PublicSubnetC
+    - Label:
+        default: 'Private route configurations'
+      Parameters: 
+        - PrivateRoute1Cidr
+        - PrivateRoute2Cidr
+        - PrivateRoute3Cidr
+    - Label:
+        default: 'Please select K8s VPC private subnets'
+      Parameters:
+        - PrivateSubnetA
+        - PrivateSubnetB
+        - PrivateSubnetC
+  ParameterLabels:
+    - KubernetesVpcId: 
+        default: 'Which VPC should the Public route table belong?'
+    - PublicRouteCidr:
+        default: 'CIDR for destination matching for public routing'
+    - PublicSubnetA:
+        default: 'Public Kubernetes subnet in AZ1'
+    - PublicSubnetB:
+        default: 'Public Kubernetes subnet in AZ2'
+    - PublicSubnetC:
+        default: 'Public Kubernetes subnet in AZ3'
+    - PrivateRoute1Cidr:
+        default: 'CIDR for destination matching for private route to AZ1'
+    - PrivateRoute2Cidr:
+        default: 'CIDR for destination matching for private route to AZ2'
+    - PrivateRoute3Cidr:
+        default: 'CIDR for destination matching for private route to AZ3'
+    - PrivateSubnetA:
+        default: 'Public Kubernetes subnet in AZ1'
+    - PrivateSubnetB:
+        default: 'Public Kubernetes subnet in AZ2'
+    - PrivateSubnetC:
+        default: 'Public Kubernetes subnet in AZ3'
+
+Resources:
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref KubernetesVpcId
+      Tags:
+        - Key: 'Name'
+          Value: !Join ['-',[!Ref 'AWS::StackName','PublicRT']]
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      GatewayId: !ImportValue KubeIGW
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: !Ref PublicRouteCidr
+  PublicSubnetARouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetA
+  PublicSubnetBRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetB
+  PublicSubnetCRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetC
+  PrivateRouteTable1:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref KubernetesVpcId
+      Tags:
+        - Key: 'Name'
+          Value: !Join ['-',[!Ref 'AWS::StackName','PrivateRT1']]
+  PrivateRoute1:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      NatGatewayId: !ImportValue NatGatewayA
+      DestinationCidrBlock: !Ref PrivateRoute1Cidr
+      RouteTableId: !Ref PrivateRouteTable1
+  PrivateSubnetARouteTable1Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      SubnetId: !Ref PrivateSubnetA
+  PrivateRouteTable2:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref KubernetesVpcId
+      Tags:
+        - Key: 'Name'
+          Value: !Join ['-',[!Ref 'AWS::StackName','PrivateRT2']]
+  PrivateRoute2:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      NatGatewayId: !ImportValue NatGatewayB
+      DestinationCidrBlock: !Ref PrivateRoute2Cidr
+      RouteTableId: !Ref PrivateRouteTable2
+  PrivateSubnetBRouteTable2Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      SubnetId: !Ref PrivateSubnetB
+  PrivateRouteTable3:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref KubernetesVpcId
+      Tags:
+        - Key: 'Name'
+          Value: !Join ['-',[!Ref 'AWS::StackName','PrivateRT3']]
+  PrivateRoute3:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      NatGatewayId: !ImportValue NatGatewayC
+      DestinationCidrBlock: !Ref PrivateRoute3Cidr
+      RouteTableId: !Ref PrivateRouteTable3
+  PrivateSubnetCRouteTable3Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable3
+      SubnetId: !Ref PrivateSubnetC
