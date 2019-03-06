@@ -48,7 +48,7 @@ Resources:
   NATGWC:
     Type: 'AWS::EC2::NatGateway'
     Properties:
-      AllocationId: !ImportValue EIP2AllocationId
+      AllocationId: !ImportValue EIP3AllocationId
       SubnetId: !Ref NATGWCSubnet
       Tags:
         - Key: 'Name'
